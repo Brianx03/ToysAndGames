@@ -1,7 +1,11 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;
+using ToysAndGames.Controllers;
+using ToysAndGames_DataAccess.Data;
 using ToysAndGames_Model.Models;
 using Xunit.Abstractions;
 
@@ -9,98 +13,153 @@ namespace TestCode
 {
     public class ToysAndGamesTest
     {
-        private readonly ITestOutputHelper _outputHelper;
-        private readonly WebApplicationFactory<Program> _factory;
-
-        public ToysAndGamesTest(ITestOutputHelper outputhelper)
-        {
-            _factory = new WebApplicationFactory<Program>();
-            _outputHelper = outputhelper;
-        }
+           
         [Fact]
         public async void TestGetProducts()
         {
-            //Arrange
-            var client = _factory.CreateDefaultClient();
-            //Act
-            var response = await client.GetAsync("/api/product/product");
-            //Assert
-            Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var responseContent = response.Content.ReadAsStringAsync().Result;
-            _outputHelper.WriteLine(JsonConvert.SerializeObject(responseContent));
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+           .UseInMemoryDatabase(databaseName: "ProductsDatabase")
+           .Options;
+
+            using (var context = new ApplicationDbContext(options))
+            {
+                context.Products.Add(new Product
+                {
+                    Name = "Car",
+                    Description = "Diecast Car",
+                    AgeRestriction = 3,
+                    Company = "HotWheels",
+                    Price = 25.00M
+                });
+
+                context.Products.Add(new Product
+                {
+                    Name = "Zoid",
+                    Description = "Action figure",
+                    AgeRestriction = 8,
+                    Company = "Mattel",
+                    Price = 805.00M
+                });
+                context.SaveChanges();
+            }
+
+            using (var context = new ApplicationDbContext(options))
+            {
+                ProductController controller = new ProductController(context);
+                var result = await controller.GetProduct() as ObjectResult;
+                List<Product>? products = result?.Value as List<Product>;
+
+                Assert.NotNull(products);
+                Assert.True(products.Count > 0);
+            }
         }
 
         [Fact]
         public async void TestCreateProducts()
         {
-            //Arrange
-            var client = _factory.CreateDefaultClient();
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+           .UseInMemoryDatabase(databaseName: "ProductsCreationDatabase")
+           .Options;
 
-            var product = new Product();
-            product.Name = "Zoid";
-            product.Description = "Liget Zero";
-            product.AgeRestriction = 8;
-            product.Company = "Kotobukiya";
-            product.Price = 800.55M;
+            Product product = new Product {
+                Name = "Car",
+                Description = "Diecast Car",
+                AgeRestriction = 3,
+                Company = "HotWheels",
+                Price = 25.00M
+            };
+         
 
-            var json = JsonConvert.SerializeObject(product);
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            using (var context = new ApplicationDbContext(options))
+            {
+                ProductController controller = new ProductController(context);
+                var resultCreate = await controller.CreateProduct(product);
 
-            //Act
-            var response = await client.PostAsync("/api/product/createproduct", data);
-            //Assert
-            Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var responseContent = response.Content.ReadAsStringAsync().Result;
-            _outputHelper.WriteLine(JsonConvert.SerializeObject(responseContent));
+                var result = await controller.GetProduct() as ObjectResult;
+                List<Product>? products = result?.Value as List<Product>;
+
+                //Assert.Equal(HttpStatusCode.OK, resultCreate.ToString());
+                Assert.NotNull(products);
+                Assert.True(products.Count > 0);
+            }
         }
 
         [Fact]
         public async void TestUpdateProducts()
         {
-            //Arrange
-            var client = _factory.CreateDefaultClient();
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+           .UseInMemoryDatabase(databaseName: "ProductsDatabase")
+           .Options;
 
-            var product = new Product();
-            product.Id = 4;
-            product.Name = "Carrito";
-            product.Description = "Corvette ZR1";
-            product.AgeRestriction = 3;
-            product.Company = "HotWheels";
-            product.Price = 40.00M;
+            using (var context = new ApplicationDbContext(options))
+            {
+                context.Products.Add(new Product
+                {
+                    Name = "Car",
+                    Description = "Diecast Car",
+                    AgeRestriction = 3,
+                    Company = "HotWheels",
+                    Price = 25.00M
+                });
+                context.SaveChanges();
+            }
 
-            var json = JsonConvert.SerializeObject(product);
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            Product product = new Product
+            {
+                Id = 1,
+                Name = "Car",
+                Description = "Diecast Car",
+                AgeRestriction = 3,
+                Company = "Matchbox",
+                Price = 29.00M
+            };
 
-            //Act
-            var response = await client.PutAsync("/api/product/updateproduct", data);
-            //Assert
-            Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var responseContent = response.Content.ReadAsStringAsync().Result;
-            _outputHelper.WriteLine(JsonConvert.SerializeObject(responseContent));
+            using (var context = new ApplicationDbContext(options))
+            {
+                ProductController controller = new ProductController(context);
+                var resultUpdate = await controller.UpdateProduct(product);
+                var result = await controller.GetProduct() as ObjectResult;
+                List<Product>? products = result?.Value as List<Product>;
+
+                Assert.NotNull(products);
+                Assert.Equal("Matchbox",products[0].Company);
+            }
         }
 
         [Fact]
-        public async void TestDelete()
+        public async void TestDeleteProducts()
         {
-            //Arrange
-            var client = _factory.CreateDefaultClient();
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+           .UseInMemoryDatabase(databaseName: "ProductsDatabase")
+           .Options;
 
-            var product = new Product();
-            product.Id = 4;
+            using (var context = new ApplicationDbContext(options))
+            {
+                context.Products.Add(new Product
+                {
+                    Name = "Car",
+                    Description = "Diecast Car",
+                    AgeRestriction = 3,
+                    Company = "HotWheels",
+                    Price = 25.00M
+                });
+                context.SaveChanges();
+            }
 
-            var json = JsonConvert.SerializeObject(product);
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            Product product = new Product
+            {
+                Id = 1,
+            };
 
-            //Act
-            var response = await client.DeleteAsync("/api/product/deleteproduct?id=6");
-            //Assert
-            Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var responseContent = response.Content.ReadAsStringAsync().Result;
-            _outputHelper.WriteLine(JsonConvert.SerializeObject(responseContent));
+            using (var context = new ApplicationDbContext(options))
+            {
+                ProductController controller = new ProductController(context);
+                var resultUpdate = await controller.DeleteProduct(1);
+                var result = await controller.GetProduct() as ObjectResult;
+                List<Product>? products = result?.Value as List<Product>;
+
+                Assert.True(products?.Count == 0);
+            }
         }
     }
 }

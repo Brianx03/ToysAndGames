@@ -16,14 +16,14 @@ namespace ToysAndGames.Controllers
         }
 
         [HttpGet("GetProduct")]
-        public IActionResult GetProduct()
+        public async Task<IActionResult> GetProduct()
         {
             List<Product> objList = _db.Products.ToList();
             return Ok(objList);
         }
 
         [HttpPost("CreateProduct")]
-        public IActionResult CreateProduct([FromBody] Product product)
+        public async Task<IActionResult> CreateProduct([FromBody] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -34,7 +34,7 @@ namespace ToysAndGames.Controllers
         }
 
         [HttpPut("UpdateProduct")]
-        public IActionResult UpdateProduct([FromBody] Product product)
+        public async Task<IActionResult> UpdateProduct([FromBody] Product product)
         {
             Product obj = _db.Products.FirstOrDefault(p => p.Id == product.Id);
             obj.Name = product.Name;
@@ -52,7 +52,7 @@ namespace ToysAndGames.Controllers
         }
 
         [HttpDelete("DeleteProduct")]
-        public IActionResult DeleteProduct([FromQuery] int id)
+        public async Task<IActionResult> DeleteProduct([FromQuery] int id)
         {
             Product? obj = _db.Products.FirstOrDefault(p => p.Id == id);
 
