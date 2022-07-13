@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ToysAndGames.Services;
 using ToysAndGames_DataAccess.Data;
 using ToysAndGames_Model.Models;
 
@@ -8,60 +9,60 @@ namespace ToysAndGames.Controllers
     [Route("api/[controller]")]
     public class ProductController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IProductServices _productServices;
 
-        public ProductController(ApplicationDbContext db)
+        public ProductController(IProductServices productServices)
         {
-            _db = db;
+            _productServices = productServices;
         }
 
         [HttpGet("GetProduct")]
-        public async Task<IActionResult> GetProduct()
+        public IActionResult GetProduct()
         {
-            List<Product> objList = _db.Products.ToList();
-            return Ok(objList);
+            var products = _productServices.Get();
+            return Ok(products);
         }
 
         [HttpPost("CreateProduct")]
-        public async Task<IActionResult> CreateProduct([FromBody] Product product)
+        public IActionResult CreateProduct([FromBody] Product product)
         {
-            if (ModelState.IsValid)
+            if (product == null)
             {
-                _db.Products.Add(product);
-                _db.SaveChanges();
+                return BadRequest();
             }
-            return Ok();
+            else
+            {
+                var newProduct = _productServices.Insert(product);
+                return Ok(newProduct);
+            }
         }
 
         [HttpPut("UpdateProduct")]
-        public async Task<IActionResult> UpdateProduct([FromBody] Product product)
+        public IActionResult UpdateProduct([FromBody] Product product)
         {
-            Product obj = _db.Products.FirstOrDefault(p => p.Id == product.Id);
-            obj.Name = product.Name;
-            obj.Description = product.Description;
-            obj.AgeRestriction = product.AgeRestriction;
-            obj.Company = product.Company;
-            obj.Price = product.Price;
-
-            if (ModelState.IsValid)
+            if (product == null)
             {
-                _db.Products.Update(obj);
-                _db.SaveChanges();
+                return BadRequest();
             }
-            return Ok();
+            else
+            {
+                var productUpdated = _productServices.Update(product);
+                return Ok(productUpdated);
+            }
         }
 
         [HttpDelete("DeleteProduct")]
-        public async Task<IActionResult> DeleteProduct([FromQuery] int id)
+        public IActionResult DeleteProduct([FromQuery] int id)
         {
-            Product? obj = _db.Products.FirstOrDefault(p => p.Id == id);
-
-            if (ModelState.IsValid)
+            if (id == 0)
             {
-                _db.Products.Remove(obj);
-                _db.SaveChanges();
+                return BadRequest();
             }
-            return Ok();
+            else
+            {
+                _productServices.Delete(id);
+                return NoContent();
+            }
         }
     }
 }

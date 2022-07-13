@@ -1,13 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System.Net;
-using System.Text;
-using ToysAndGames.Controllers;
+using ToysAndGames.Services;
 using ToysAndGames_DataAccess.Data;
 using ToysAndGames_Model.Models;
-using Xunit.Abstractions;
 
 namespace TestCode
 {
@@ -37,7 +31,7 @@ namespace TestCode
                     Name = "Zoid",
                     Description = "Action figure",
                     AgeRestriction = 8,
-                    Company = "Mattel",
+                    Company = "Kotobukiya",
                     Price = 805.00M
                 });
                 context.SaveChanges();
@@ -45,9 +39,8 @@ namespace TestCode
 
             using (var context = new ApplicationDbContext(options))
             {
-                ProductController controller = new ProductController(context);
-                var result = await controller.GetProduct() as ObjectResult;
-                List<Product>? products = result?.Value as List<Product>;
+                ProductServices service = new ProductServices(context);
+                var products = service.Get();
 
                 Assert.NotNull(products);
                 Assert.True(products.Count > 0);
@@ -72,11 +65,9 @@ namespace TestCode
 
             using (var context = new ApplicationDbContext(options))
             {
-                ProductController controller = new ProductController(context);
-                var resultCreate = await controller.CreateProduct(product);
-
-                var result = await controller.GetProduct() as ObjectResult;
-                List<Product>? products = result?.Value as List<Product>;
+                ProductServices service = new ProductServices(context);
+                var resultCreate = service.Insert(product);
+                var products = service.Get();
 
                 //Assert.Equal(HttpStatusCode.OK, resultCreate.ToString());
                 Assert.NotNull(products);
@@ -116,10 +107,9 @@ namespace TestCode
 
             using (var context = new ApplicationDbContext(options))
             {
-                ProductController controller = new ProductController(context);
-                var resultUpdate = await controller.UpdateProduct(product);
-                var result = await controller.GetProduct() as ObjectResult;
-                List<Product>? products = result?.Value as List<Product>;
+                ProductServices service = new ProductServices(context);
+                var resultUpdate = service.Update(product);
+                var products = service.Get();
 
                 Assert.NotNull(products);
                 Assert.Equal("Matchbox",products[0].Company);
@@ -153,10 +143,9 @@ namespace TestCode
 
             using (var context = new ApplicationDbContext(options))
             {
-                ProductController controller = new ProductController(context);
-                var resultUpdate = await controller.DeleteProduct(1);
-                var result = await controller.GetProduct() as ObjectResult;
-                List<Product>? products = result?.Value as List<Product>;
+                ProductServices service = new ProductServices(context);
+                service.Delete(1);
+                var products = service.Get();
 
                 Assert.True(products?.Count == 0);
             }
