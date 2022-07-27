@@ -7,7 +7,7 @@ using ToysAndGames_DataAccess.Data;
 
 #nullable disable
 
-namespace ToysAndGames_DataAccess.Migrations
+namespace ToysAndGames.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -55,7 +55,7 @@ namespace ToysAndGames_DataAccess.Migrations
 
                     b.ToTable("Products");
 
-                    b.HasCheckConstraint("CK_Products_AgeRestriction_Range", "(AgeRestriction >= 1 AND AgeRestriction <= 100)");
+                    b.HasCheckConstraint("CK_Products_AgeRestriction_Range", "(AgeRestriction >= 0 AND AgeRestriction <= 100)");
 
                     b.HasCheckConstraint("CK_Products_Price_Range", "(Price >= 1 AND Price <= 1000)");
 

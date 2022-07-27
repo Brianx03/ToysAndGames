@@ -5,36 +5,41 @@ namespace ToysAndGames.Services
 {
     public class ProductServices : IProductServices
     {
-        private readonly ApplicationDbContext db;
+        private readonly ApplicationDbContext _db;
         public ProductServices(ApplicationDbContext db)
         {
-            this.db = db;
+            this._db = db;
         }
 
         public List<Product> Get()
         {
-            return db.Products.ToList();
+            return _db.Products.ToList();
         }
 
         public Product Insert(Product product)
         {
-            db.Products.Add(product);
-            db.SaveChanges();
+            _db.Products.Add(product);
+            _db.SaveChanges();
             return product;
         }
 
         public Product Update(Product product)
         {
-            db.Products.Update(product);
-            db.SaveChanges();
+            _db.Products.Update(product);
+            _db.SaveChanges();
             return product;
         }
 
-        public void Delete(int id)
+        public int Delete(int id)
         {
-            var p = db.Products.FirstOrDefault(p => p.Id == id);
-            db.Products.Remove(p);
-            db.SaveChanges();
+            var p = _db.Products.Find(id);
+            if (p != null)
+            {
+                _db.Products.Remove(p);
+                _db.SaveChanges();
+                return p.Id;
+            }
+            return 0;
         }
     }
 }

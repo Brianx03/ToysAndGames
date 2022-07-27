@@ -8,6 +8,6 @@ namespace ToysAndGames.Services
         List<Product> Get();
         Product Insert(Product product);
         Product Update(Product product);
-        void Delete(int id);
+        int Delete(int id);
     }
 }

@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Net;
@@ -10,42 +9,50 @@ namespace Tests
 {
     public class UnitTest
     {
-        [Fact]
-        public void GetProductNotNull_CountGreaterThanZero_And_ResponseIsOk()
+        public static IEnumerable<object[]> Data()
+        {
+            var testcase = new List<Product>
+            {
+                new Product
+                {
+                    Id = 1,
+                    Name = "Car",
+                    Description = "Diecast Car",
+                    AgeRestriction = 3,
+                    Company = "HotWheels",
+                    Price = 39.00M
+                },
+                new Product
+                {
+                    Id = 2,
+                    Name = "Car",
+                    Description = "Diecast Car",
+                    AgeRestriction = 3,
+                    Company = "MatchBox",
+                    Price = 29.0M
+                },
+                new Product
+                {
+                    Id = 3,
+                    Name = "Zoid",
+                    Description = "Action figure",
+                    AgeRestriction = 10,
+                    Company = "Kotobukiya",
+                    Price = 999.00M
+                }
+            };
+
+            yield return new object[] { testcase };
+        }
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public void GetProductNotNullCountSameAsMemberDataAndResponseIsOk(List<Product> products)
         {
             //Arrange
             var mockService = new Mock<IProductServices>();
             mockService.Setup(s => s.Get())
-                        .Returns(new List<Product>
-                        {
-                            new Product()
-                            {
-                                Id = 1,
-                                Name = "Car",
-                                Description = "Diecast Car",
-                                AgeRestriction = 3,
-                                Company="HotWheels",
-                                Price = 39.00M
-                            },
-                            new Product()
-                            {
-                                Id = 1,
-                                Name = "Car",
-                                Description = "Diecast Car",
-                                AgeRestriction = 3,
-                                Company="MatchBox",
-                                Price = 29.0M
-                            },
-                            new Product()
-                            {
-                                Id = 1,
-                                Name = "Zoid",
-                                Description = "Action figure",
-                                AgeRestriction = 10,
-                                Company="Kotobukiya",
-                                Price = 999.00M
-                            }
-                        });
+                        .Returns(products);
 
             var controller = new ProductController(mockService.Object);
 
@@ -54,67 +61,52 @@ namespace Tests
             var resultList = result.Value as List<Product>;
             //Assert
             Assert.NotNull(result.Value);
-            Assert.True(resultList.Count > 0);
+            Assert.True(resultList?.Count() == products.Count());
             Assert.Equal(200, result.StatusCode);
         }
 
-        [Fact]
-        public void InsertProduct_And_Validate_Id_Greater_Than_Cero()
+        [Theory]
+        [MemberData(nameof(Data))]
+        public void InsertProductAndValidateId(List<Product> products)
         {
             //Arrange
-            Product product = new Product()
-            {
-                Id = 1,
-                Name = "Car",
-                Description = "Diecast Car",
-                AgeRestriction = 3,
-                Company = "HotWheels",
-                Price = 39.00M
-            };
-
             var mockService = new Mock<IProductServices>();
-            mockService.Setup(s => s.Insert(It.IsAny<Product>())).Returns(product);
+            mockService.Setup(s => s.Insert(It.IsAny<Product>())).Returns(products[0]);
             var controller = new ProductController(mockService.Object);
 
             //Act
-            var result = ((OkObjectResult)controller.CreateProduct(product)).Value as Product;
+            var result = ((CreatedResult)controller.CreateProduct(products[0])).Value as Product;
 
             //Asert
             Assert.NotNull(result);
-            Assert.True(result.Id > 0);
+            Assert.True(result?.Id == 1);
         }
 
-        [Fact]
-        public void UpdateProduct_And_Validate_Company()
+        [Theory]
+        [MemberData(nameof(Data))]
+        public void UpdateProductAndValidateCompany(List<Product> products)
         {
             //Arrange
-            Product product = new Product()
-            {
-                Id = 1,
-                Name = "Car",
-                Description = "Diecast Car",
-                AgeRestriction = 3,
-                Company = "HotWheels",
-                Price = 39.00M
-            };
             var mockService = new Mock<IProductServices>();
-            mockService.Setup(s => s.Update(product)).Returns(product);
+            mockService.Setup(s => s.Update(products[0])).Returns(products[0]);
             var controller = new ProductController(mockService.Object);
 
             //Act
-            var result = ((OkObjectResult)controller.UpdateProduct(product)).Value as Product;
+            var result = ((OkObjectResult)controller.UpdateProduct(products[0])).Value as Product;
 
             //Assert
-            Assert.Equal(1, result.Id);
-            Assert.Equal("HotWheels", result.Company);
+            Assert.NotNull(result);
+            Assert.Equal(1, result?.Id);
+            Assert.Equal("HotWheels", result?.Company);
         }
 
-        [Fact]
-        public void Delete_Product_Returns_NoContent()
+        [Theory]
+        [InlineData(1)]
+        public void DeleteProductReturnsNoContent(int id)
         {
             //Arrange
             var mockService = new Mock<IProductServices>();
-            mockService.Setup(s => s.Delete(It.IsAny<int>()));
+            mockService.Setup(s => s.Delete(It.IsAny<int>())).Returns(1);
             var controller = new ProductController(mockService.Object);
 
             //Act
@@ -124,11 +116,11 @@ namespace Tests
             Assert.Equal(204, actionResult.StatusCode);
         }
 
-        [Fact]
-        public void Insert_null_Product_Returns_Bad_Request()
+        [Theory]
+        [InlineData(null)]
+        public void InsertNullProductReturnsBadRequest(Product product)
         {
             //Arrange
-            Product? product = null;
             var mockService = new Mock<IProductServices>();
             mockService.Setup(s => s.Insert(product));
             var controller = new ProductController(mockService.Object);

@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Moq;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;
-using ToysAndGames.Controllers;
-using ToysAndGames_DataAccess.Data;
 using ToysAndGames_Model.Models;
 using Xunit.Abstractions;
 
@@ -12,100 +9,146 @@ namespace Tests
 {
     public class IntegrationTest
     {
-        private readonly ITestOutputHelper _outputHelper;
-        private readonly ProductController _controller;
         private readonly WebApplicationFactory<Program> _factory;
-        private readonly Mock<ApplicationDbContext> _db;
+
+
 
         public IntegrationTest(ITestOutputHelper outputhelper)
         {
             _factory = new WebApplicationFactory<Program>();
-            _outputHelper = outputhelper;
         }
+
+        public static IEnumerable<object[]> Data()
+        {
+            var testcase = new Product()
+            {
+                Name = "Zoid",
+                Description = "Shield Liger",
+                AgeRestriction = 5,
+                Company = "Hasbro",
+                Price = 600.55M
+            };
+
+            yield return new object[] { testcase };
+        }
+
+        public static IEnumerable<object[]> Data2()
+        {
+            var testcase = new Product()
+            {
+                Name = "Corvette ZR1",
+                Description = "Diecast Car",
+                AgeRestriction = 8,
+                Company = "HotWheels",
+                Price = 40.55M
+            };
+
+            yield return new object[] { testcase };
+        }
+
+        public static IEnumerable<object[]> Data3()
+        {
+            var testcase = new Product()
+            {
+                Name = "Zoid",
+                Description = "Liger Zero",
+                AgeRestriction = 200,
+                Company = "Kotobukiya",
+                Price = 800.55M
+            };
+
+            yield return new object[] { testcase };
+        }
+
         [Fact]
-        public async Task TestGetProducts()
+        public async void GetAllProductsReturnsOk()
         {
             //Arrange
             var client = _factory.CreateDefaultClient();
             //Act
-            var response = await client.GetAsync("/api/product/getproduct");
+            var response = await client.GetAsync("/api/product");
+
             //Assert
             Assert.NotNull(response);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var responseContent = response.Content.ReadAsStringAsync().Result;
-            _outputHelper.WriteLine(JsonConvert.SerializeObject(responseContent));
         }
 
-        [Fact]
-        public async void TestCreateProducts()
+        [Theory]
+        [MemberData(nameof(Data))]
+        [MemberData(nameof(Data2))]
+        public async void GivenTwoProductsInsertReturnsCreated(Product product)
         {
             //Arrange
             var client = _factory.CreateDefaultClient();
-
-            var product = new Product();
-            product.Name = "Zoid";
-            product.Description = "Liget Zero";
-            product.AgeRestriction = 8;
-            product.Company = "Kotobukiya";
-            product.Price = 800.55M;
 
             var json = JsonConvert.SerializeObject(product);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             //Act
-            var response = await client.PostAsync("/api/product/createproduct", data);
+            var response = await client.PostAsync("/api/product", data);
             //Assert
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var responseContent = response.Content.ReadAsStringAsync().Result;
-            _outputHelper.WriteLine(JsonConvert.SerializeObject(responseContent));
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
-
-        [Fact]
-        public async void TestUpdateProducts()
+        [Theory]
+        [MemberData(nameof(Data3))]
+        public async void GivenProductWithInvalidAgeRestrictionReturnsException(Product product)
         {
             //Arrange
             var client = _factory.CreateDefaultClient();
-
-            var product = new Product();
-            product.Id = 9;
-            product.Name = "Carrito";
-            product.Description = "Corvette ZR1";
-            product.AgeRestriction = 3;
-            product.Company = "HotWheels";
-            product.Price = 40.00M;
 
             var json = JsonConvert.SerializeObject(product);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             //Act
-            var response = await client.PutAsync("/api/product/updateproduct", data);
+            var response = await client.PostAsync("/api/product", data);
             //Assert
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var responseContent = response.Content.ReadAsStringAsync().Result;
-            _outputHelper.WriteLine(JsonConvert.SerializeObject(responseContent));
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
-        [Fact]
-        public async void TestDelete()
+        [Theory]
+        [MemberData(nameof(Data))]
+        public async void getsProductsAndUpdateFirst(Product product)
         {
             //Arrange
             var client = _factory.CreateDefaultClient();
 
-            var product = new Product();
-            product.Id = 9;
+            //Act
+            var response = await client.GetAsync("/api/product");
+            var obj = response.Content.ReadAsStringAsync().Result;
+            var firsProduct = (JsonConvert.DeserializeObject<List<Product>>(obj)).FirstOrDefault();
+
+            product.Id = firsProduct.Id;
+
+            var json = JsonConvert.SerializeObject(product);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var responseUpdate = await client.PutAsync("/api/product", data);
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public async void InsertsProductThenDeletesIt(Product product)
+        {
+            //Arrange
+            var client = _factory.CreateDefaultClient();
 
             var json = JsonConvert.SerializeObject(product);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             //Act
-            var response = await client.DeleteAsync($"/api/product/deleteproduct?id={product.Id}");
+            var responseInsert = await client.PostAsync("/api/product", data);
+            var obj = responseInsert.Content.ReadAsStringAsync().Result;
+            var jsonResponse = JsonConvert.DeserializeObject<Product>(obj);
+
+            var responseDelete = await client.DeleteAsync($"/api/product/{jsonResponse.Id}");
+            
             //Assert
-            Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            var responseContent = response.Content.ReadAsStringAsync().Result;
-            _outputHelper.WriteLine(JsonConvert.SerializeObject(responseContent));
+            Assert.Equal(204, (int)responseDelete.StatusCode);
         }
     }
 }

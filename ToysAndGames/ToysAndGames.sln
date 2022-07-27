@@ -5,13 +5,11 @@ VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToysAndGames", "ToysAndGames.csproj", "{849B1EBB-6117-450F-BD02-06953BEB3599}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToysAndGames_DataAccess", "..\ToysAndGames_DataAccess\ToysAndGames_DataAccess.csproj", "{F62A5FB0-2A03-4DCB-940A-B53C86B04CD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToysAndGames.DataAccess", "..\ToysAndGames_DataAccess\ToysAndGames.DataAccess.csproj", "{F62A5FB0-2A03-4DCB-940A-B53C86B04CD1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToysAndGames_Model", "..\ToysAndGames_Model\ToysAndGames_Model.csproj", "{0ED3F1B4-0666-4C1B-BC34-2C30DA86F43E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToysAndGames.Model", "..\ToysAndGames_Model\ToysAndGames.Model.csproj", "{0ED3F1B4-0666-4C1B-BC34-2C30DA86F43E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCode", "..\TestCode\TestCode.csproj", "{8BB2D5E7-3EFC-4A90-AE79-236CF1EBEDB0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "..\Tests\Tests.csproj", "{842BCB7D-414D-442A-9855-FE6B13682458}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "..\Tests\Tests.csproj", "{842BCB7D-414D-442A-9855-FE6B13682458}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +29,6 @@ Global
 		{0ED3F1B4-0666-4C1B-BC34-2C30DA86F43E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0ED3F1B4-0666-4C1B-BC34-2C30DA86F43E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0ED3F1B4-0666-4C1B-BC34-2C30DA86F43E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8BB2D5E7-3EFC-4A90-AE79-236CF1EBEDB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8BB2D5E7-3EFC-4A90-AE79-236CF1EBEDB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8BB2D5E7-3EFC-4A90-AE79-236CF1EBEDB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8BB2D5E7-3EFC-4A90-AE79-236CF1EBEDB0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{842BCB7D-414D-442A-9855-FE6B13682458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{842BCB7D-414D-442A-9855-FE6B13682458}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{842BCB7D-414D-442A-9855-FE6B13682458}.Release|Any CPU.ActiveCfg = Release|Any CPU

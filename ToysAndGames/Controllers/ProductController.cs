@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ToysAndGames.Services;
-using ToysAndGames_DataAccess.Data;
 using ToysAndGames_Model.Models;
 
 namespace ToysAndGames.Controllers
@@ -16,53 +15,44 @@ namespace ToysAndGames.Controllers
             _productServices = productServices;
         }
 
-        [HttpGet("GetProduct")]
+        [HttpGet]
         public IActionResult GetProduct()
         {
             var products = _productServices.Get();
             return Ok(products);
         }
 
-        [HttpPost("CreateProduct")]
+        [HttpPost]
         public IActionResult CreateProduct([FromBody] Product product)
         {
-            if (product == null)
-            {
+            if(product == null)
                 return BadRequest();
-            }
-            else
+            try
             {
                 var newProduct = _productServices.Insert(product);
-                return Ok(newProduct);
+                return Created("api/product", newProduct);
+            }
+            catch(Exception e)
+            {
+                return (IActionResult)e;
             }
         }
 
-        [HttpPut("UpdateProduct")]
+        [HttpPut]
         public IActionResult UpdateProduct([FromBody] Product product)
         {
-            if (product == null)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                var productUpdated = _productServices.Update(product);
-                return Ok(productUpdated);
-            }
+            var productUpdated = _productServices.Update(product);
+            return Ok(productUpdated);
         }
 
-        [HttpDelete("DeleteProduct")]
-        public IActionResult DeleteProduct([FromQuery] int id)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteProduct([FromRoute] int id)
         {
-            if (id == 0)
+            if (_productServices.Delete(id) == 0) 
             {
-                return BadRequest();
+                return NotFound();
             }
-            else
-            {
-                _productServices.Delete(id);
-                return NoContent();
-            }
+            return NoContent();      
         }
     }
 }
