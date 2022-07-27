@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ToysAndGames_DataAccess.Data.FluentConfig;
-using ToysAndGames_Model.Models;
+using ToysAndGamesDataAccess.Data.FluentConfig;
+using ToysAndGamesModel.Models;
 
-namespace ToysAndGames_DataAccess.Data
+namespace ToysAndGamesDataAccess.Data
 {
     public class ApplicationDbContext : DbContext
     {

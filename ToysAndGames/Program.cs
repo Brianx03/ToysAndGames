@@ -1,5 +1,5 @@
 using ToysAndGames.Services;
-using ToysAndGames_DataAccess.Data;
+using ToysAndGamesDataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 

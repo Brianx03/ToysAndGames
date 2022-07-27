@@ -1,4 +1,4 @@
-﻿namespace ToysAndGames_Model.Models
+﻿namespace ToysAndGamesModel.Models
 {
     public class Product
     {

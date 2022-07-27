@@ -1,5 +1,5 @@
-﻿using ToysAndGames_DataAccess.Data;
-using ToysAndGames_Model.Models;
+﻿using ToysAndGamesDataAccess.Data;
+using ToysAndGamesModel.Models;
 
 namespace ToysAndGames.Services
 {

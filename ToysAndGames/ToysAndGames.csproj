@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ToysAndGames_DataAccess\ToysAndGames.DataAccess.csproj" />
-    <ProjectReference Include="..\ToysAndGames_Model\ToysAndGames.Model.csproj" />
+    <ProjectReference Include="..\ToysAndGames_DataAccess\ToysAndGamesDataAccess.csproj" />
+    <ProjectReference Include="..\ToysAndGames_Model\ToysAndGamesModel.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,7 +3,7 @@ using Moq;
 using System.Net;
 using ToysAndGames.Controllers;
 using ToysAndGames.Services;
-using ToysAndGames_Model.Models;
+using ToysAndGamesModel.Models;
 
 namespace Tests
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ToysAndGames.Services;
-using ToysAndGames_Model.Models;
+using ToysAndGamesModel.Models;
 
 namespace ToysAndGames.Controllers
 {

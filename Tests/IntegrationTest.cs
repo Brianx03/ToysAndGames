@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;
-using ToysAndGames_Model.Models;
+using ToysAndGamesModel.Models;
 using Xunit.Abstractions;
 
 namespace Tests

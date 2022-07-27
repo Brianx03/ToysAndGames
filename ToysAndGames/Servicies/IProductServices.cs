@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ToysAndGames_Model.Models;
+using ToysAndGamesModel.Models;
 
 namespace ToysAndGames.Services
 {

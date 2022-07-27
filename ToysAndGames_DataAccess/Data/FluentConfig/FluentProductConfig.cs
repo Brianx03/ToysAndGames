@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ToysAndGames_Model.Models;
+using ToysAndGamesModel.Models;
 
-namespace ToysAndGames_DataAccess.Data.FluentConfig
+namespace ToysAndGamesDataAccess.Data.FluentConfig
 {
     public class FluentProductConfig : IEntityTypeConfiguration<Product>
     {
