@@ -16,43 +16,39 @@ namespace ToysAndGames.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetProduct()
+        public async Task<ActionResult> GetProduct()
         {
-            var products = _productServices.Get();
+            var products = await _productServices.Get();
             return Ok(products);
         }
 
         [HttpPost]
-        public IActionResult CreateProduct([FromBody] Product product)
+        public async Task<ActionResult> CreateProduct([FromBody] Product product)
         {
-            if(product == null)
+            if (product == null)
+            {
                 return BadRequest();
-            try
-            {
-                var newProduct = _productServices.Insert(product);
-                return Created("api/product", newProduct);
             }
-            catch(Exception e)
-            {
-                return (IActionResult)e;
-            }
+
+            var newProduct = await _productServices.Insert(product);
+            return Created("api/product", newProduct);
         }
 
         [HttpPut]
-        public IActionResult UpdateProduct([FromBody] Product product)
+        public async Task<ActionResult> UpdateProduct([FromBody] Product product)
         {
-            var productUpdated = _productServices.Update(product);
+            var productUpdated = await _productServices.Update(product);
             return Ok(productUpdated);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteProduct([FromRoute] int id)
+        public async Task<ActionResult> DeleteProduct([FromRoute] int id)
         {
-            if (_productServices.Delete(id) == 0) 
+            if (await _productServices.Delete(id) == 0)
             {
                 return NotFound();
             }
-            return NoContent();      
+            return NoContent();
         }
     }
 }

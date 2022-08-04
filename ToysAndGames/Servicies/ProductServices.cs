@@ -1,5 +1,6 @@
 ﻿using ToysAndGamesDataAccess.Data;
 using ToysAndGamesModel.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ToysAndGames.Services
 {
@@ -8,35 +9,33 @@ namespace ToysAndGames.Services
         private readonly ApplicationDbContext _db;
         public ProductServices(ApplicationDbContext db)
         {
-            this._db = db;
+            _db = db;
         }
-
-        public List<Product> Get()
+        public async Task<List<Product>> Get()
         {
-            return _db.Products.ToList();
+            return await _db.Products.ToListAsync();
         }
-
-        public Product Insert(Product product)
+        public async Task<Product> Insert(Product product)
         {
-            _db.Products.Add(product);
-            _db.SaveChanges();
+            await _db.Products.AddAsync(product);
+            await _db.SaveChangesAsync();
             return product;
         }
 
-        public Product Update(Product product)
+        public async Task<Product> Update(Product product)
         {
             _db.Products.Update(product);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return product;
         }
 
-        public int Delete(int id)
+        public async Task<int> Delete(int id)
         {
-            var p = _db.Products.Find(id);
+            var p = await _db.Products.FindAsync(id);
             if (p != null)
             {
                 _db.Products.Remove(p);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 return p.Id;
             }
             return 0;

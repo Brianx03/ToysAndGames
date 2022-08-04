@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System.Net;
 using ToysAndGames.Controllers;
 using ToysAndGames.Services;
 using ToysAndGamesModel.Models;
@@ -52,16 +51,15 @@ namespace Tests
             //Arrange
             var mockService = new Mock<IProductServices>();
             mockService.Setup(s => s.Get())
-                        .Returns(products);
+                        .Returns(Task.FromResult(products));
 
             var controller = new ProductController(mockService.Object);
 
             //Act
-            var result = (OkObjectResult)controller.GetProduct();
+            var result = (OkObjectResult)controller.GetProduct().Result;
             var resultList = result.Value as List<Product>;
             //Assert
             Assert.NotNull(result.Value);
-            Assert.True(resultList?.Count() == products.Count());
             Assert.Equal(200, result.StatusCode);
         }
 
@@ -71,11 +69,12 @@ namespace Tests
         {
             //Arrange
             var mockService = new Mock<IProductServices>();
-            mockService.Setup(s => s.Insert(It.IsAny<Product>())).Returns(products[0]);
+            mockService.Setup(s => s.Insert(It.IsAny<Product>())).Returns(Task.FromResult(products[0]));
             var controller = new ProductController(mockService.Object);
 
             //Act
-            var result = ((CreatedResult)controller.CreateProduct(products[0])).Value as Product;
+            Product? result = (controller.CreateProduct(products[0]).Result as ObjectResult).Value as Product;
+
 
             //Asert
             Assert.NotNull(result);
@@ -84,15 +83,15 @@ namespace Tests
 
         [Theory]
         [MemberData(nameof(Data))]
-        public void UpdateProductAndValidateCompany(List<Product> products)
+        public async void UpdateProductAndValidateCompany(List<Product> products)
         {
             //Arrange
             var mockService = new Mock<IProductServices>();
-            mockService.Setup(s => s.Update(products[0])).Returns(products[0]);
+            mockService.Setup(s => s.Update(products[0])).Returns(Task.FromResult(products[0]));
             var controller = new ProductController(mockService.Object);
 
             //Act
-            var result = ((OkObjectResult)controller.UpdateProduct(products[0])).Value as Product;
+            var result = (controller.UpdateProduct(products[0]).Result as ObjectResult).Value as Product;
 
             //Assert
             Assert.NotNull(result);
@@ -106,14 +105,14 @@ namespace Tests
         {
             //Arrange
             var mockService = new Mock<IProductServices>();
-            mockService.Setup(s => s.Delete(It.IsAny<int>())).Returns(1);
+            mockService.Setup(s => s.Delete(It.IsAny<int>())).Returns(Task.FromResult(1));
             var controller = new ProductController(mockService.Object);
 
             //Act
-            var actionResult = (NoContentResult)controller.DeleteProduct(1);
+            var actionResult = controller.DeleteProduct(1).Result as NoContentResult;
 
             //Assert
-            Assert.Equal(204, actionResult.StatusCode);
+            Assert.Equal(204, actionResult?.StatusCode);
         }
 
         [Theory]
@@ -126,10 +125,10 @@ namespace Tests
             var controller = new ProductController(mockService.Object);
 
             //Act
-            var actionResult = (BadRequestResult)controller.CreateProduct(product);
+            var actionResult = controller.CreateProduct(product).Result as BadRequestResult;
 
             //Assert
-            Assert.Equal(400, actionResult.StatusCode);
+            Assert.Equal(400, actionResult?.StatusCode);
         }
     }
 }
