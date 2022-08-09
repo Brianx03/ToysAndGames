@@ -26,7 +26,8 @@ namespace Tests
                 Description = "Shield Liger",
                 AgeRestriction = 5,
                 Company = "Hasbro",
-                Price = 600.55M
+                Price = 600.55M,
+                ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg",
             };
 
             yield return new object[] { testcase };
@@ -40,7 +41,8 @@ namespace Tests
                 Description = "Diecast Car",
                 AgeRestriction = 8,
                 Company = "HotWheels",
-                Price = 40.55M
+                Price = 40.55M,
+                ImagePath = "",
             };
 
             yield return new object[] { testcase };
@@ -54,7 +56,8 @@ namespace Tests
                 Description = "Liger Zero",
                 AgeRestriction = 200,
                 Company = "Kotobukiya",
-                Price = 800.55M
+                Price = 800.55M,
+                ImagePath = ""
             };
 
             yield return new object[] { testcase };

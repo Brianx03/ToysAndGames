@@ -22,7 +22,8 @@ namespace Tests
                     Description = "Diecast Car",
                     AgeRestriction = 3,
                     Company = "HotWheels",
-                    Price = 39.00M
+                    Price = 39.00M,
+                    ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg"
                 },
                 new Product
                 {
@@ -31,7 +32,8 @@ namespace Tests
                     Description = "Diecast Car",
                     AgeRestriction = 3,
                     Company = "MatchBox",
-                    Price = 29.0M
+                    Price = 29.0M,
+                    ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg"
                 },
                 new Product
                 {
@@ -40,7 +42,8 @@ namespace Tests
                     Description = "Action figure",
                     AgeRestriction = 10,
                     Company = "Kotobukiya",
-                    Price = 999.00M
+                    Price = 999.00M,
+                    ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg"
                 }
             };
 
@@ -137,7 +140,6 @@ namespace Tests
         [Fact]
         public async Task GetAllProductsAsync_orders_by_name()
         {
-
             var data = new List<Product>
             {
                 new Product { Id = 1, Name = "Car" },

@@ -22,7 +22,9 @@ namespace ToysAndGamesDataAccess.Data.FluentConfig
                 Description = "Diecast cars",
                 AgeRestriction = 3,
                 Company = "HotWheels",
-                Price = 25.00M
+                Price = 25.00M,
+                ImagePath = "",
+                ImageBytes = new byte[] { 0x0 }
             });
         }
     }
