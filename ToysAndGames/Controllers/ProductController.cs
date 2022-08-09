@@ -4,6 +4,10 @@ using ToysAndGamesModel.Models;
 
 namespace ToysAndGames.Controllers
 {
+
+    //TODO: Move the services to a different Layer
+
+
     [ApiController]
     [Route("api/[controller]")]
     public class ProductController : Controller

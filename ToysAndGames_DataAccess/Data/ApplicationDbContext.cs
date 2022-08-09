@@ -12,10 +12,13 @@ namespace ToysAndGamesDataAccess.Data
         }
 
 
+        //TODO: Move this to the upper section, usually the classes structure is Properties, Constructors and the Methods
         public virtual DbSet<Product> Products { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //TODO: There is a ApplyConfigurationFromAssembly Method
+
             modelBuilder.ApplyConfiguration(new FluentProductConfig());
         }
     }

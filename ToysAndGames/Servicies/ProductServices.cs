@@ -7,6 +7,8 @@ namespace ToysAndGames.Services
 {
     public class ProductServices : IProductServices
     {
+        //TODO: usually the variable is named context instead of _db
+        //TODO: Use try catch for the services operations
         private readonly ApplicationDbContext _db;
         public ProductServices(ApplicationDbContext db)
         {
@@ -34,7 +36,9 @@ namespace ToysAndGames.Services
 
         public async Task<int> Delete(int id)
         {
+            //TODO: use variables with meanings
             var p = await _db.Products.FindAsync(id);
+            //TODO: try to use the new naming for is null or is not null
             if (p != null)
             {
                 _db.Products.Remove(p);
