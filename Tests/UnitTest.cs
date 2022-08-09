@@ -3,9 +3,6 @@ using Moq;
 using ToysAndGames.Controllers;
 using ToysAndGames.Services;
 using ToysAndGamesModel.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Data.Entity.Infrastructure;
-using ToysAndGamesDataAccess.Data;
 
 namespace Tests
 {
@@ -23,7 +20,8 @@ namespace Tests
                     AgeRestriction = 3,
                     Company = "HotWheels",
                     Price = 39.00M,
-                    ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg"
+                    ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg",
+                    ImageBytes = new byte[] { 0x0 }
                 },
                 new Product
                 {
@@ -33,7 +31,8 @@ namespace Tests
                     AgeRestriction = 3,
                     Company = "MatchBox",
                     Price = 29.0M,
-                    ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg"
+                    ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg",
+                    ImageBytes = new byte[] { 0x0 }
                 },
                 new Product
                 {
@@ -43,7 +42,8 @@ namespace Tests
                     AgeRestriction = 10,
                     Company = "Kotobukiya",
                     Price = 999.00M,
-                    ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg"
+                    ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg",                    
+                    ImageBytes = new byte[] { 0x0 }
                 }
             };
 
@@ -135,40 +135,6 @@ namespace Tests
 
             //Assert
             Assert.Equal(400, actionResult?.StatusCode);
-        }
-
-        [Fact]
-        public async Task GetAllProductsAsync_orders_by_name()
-        {
-            var data = new List<Product>
-            {
-                new Product { Id = 1, Name = "Car" },
-                new Product { Id = 2, Name = "Action Figure" },
-                new Product { Id = 3, Name = "FootBall" },
-            }.AsQueryable();
-
-            var mockSet = new Mock<DbSet<Product>>();
-            mockSet.As<IDbAsyncEnumerable<Product>>()
-                .Setup(m => m.GetAsyncEnumerator())
-                .Returns(new TestDbAsyncEnumerator<Product>(data.GetEnumerator()));
-
-            mockSet.As<IQueryable<Product>>()
-                .Setup(m => m.Provider)
-                .Returns(new TestDbAsyncQueryProvider<Product>(data.Provider));
-
-            mockSet.As<IQueryable<Product>>().Setup(m => m.Expression).Returns(data.Expression);
-            mockSet.As<IQueryable<Product>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            mockSet.As<IQueryable<Product>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
-
-            var optionBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            var mockContext = new Mock<ApplicationDbContext>(optionBuilder.Options);
-
-            mockContext.Setup(c => c.Products).Returns(mockSet.Object);
-
-            var service = new ProductServices(mockContext.Object);
-            var products = await service.Get();
-
-            Assert.NotNull(products);
         }
     }
 }

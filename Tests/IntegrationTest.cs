@@ -28,6 +28,7 @@ namespace Tests
                 Company = "Hasbro",
                 Price = 600.55M,
                 ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg",
+                ImageBytes = new byte[] { 0x0 }
             };
 
             yield return new object[] { testcase };
@@ -42,7 +43,8 @@ namespace Tests
                 AgeRestriction = 8,
                 Company = "HotWheels",
                 Price = 40.55M,
-                ImagePath = "",
+                ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg",
+                ImageBytes = new byte[] { 0x0 }
             };
 
             yield return new object[] { testcase };
@@ -57,7 +59,8 @@ namespace Tests
                 AgeRestriction = 200,
                 Company = "Kotobukiya",
                 Price = 800.55M,
-                ImagePath = ""
+                ImagePath = "C:\\Users\\brian.armenta\\Pictures\\SamplePhotos\\dog.jpg",
+                ImageBytes = new byte[] { 0x0 }
             };
 
             yield return new object[] { testcase };
